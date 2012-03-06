@@ -10,21 +10,21 @@
 #include "boost.h"
 
 
-static gboolean init (void);
+static gboolean init(void);
 static void cleanup(void);
 
-#define MAX_SRATE 50000
-#define MAX_CHANNELS 2
-#define BYTES_PS sizeof(gfloat)
-#define BUFFER_SAMPLES (MAX_SRATE * MAX_DELAY / 1000)
-#define BUFFER_SHORTS (BUFFER_SAMPLES * MAX_CHANNELS)
-#define BUFFER_BYTES (BUFFER_SHORTS * BYTES_PS)
+#define MAX_SRATE         50000
+#define MAX_CHANNELS      2
+#define BYTES_PS          sizeof(gfloat)
+#define BUFFER_SAMPLES    (MAX_SRATE * MAX_DELAY / 1000)
+#define BUFFER_SHORTS     (BUFFER_SAMPLES * MAX_CHANNELS)
+#define BUFFER_BYTES      (BUFFER_SHORTS * BYTES_PS)
 
 static gfloat *buffer = NULL;
 gint boost_delay = 500, boost_feedback = 50, boost_volume = 50;
 static int w_ofs;
 
-static gboolean init (void)
+static gboolean init(void)
 {
 	mcs_handle_t *cfg;
 

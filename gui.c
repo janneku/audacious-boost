@@ -17,20 +17,20 @@ static const char *boost_about_text =
 static GtkWidget *conf_dialog = NULL;
 static GtkAdjustment * boost_delay_adj, * boost_feedback_adj, * boost_volume_adj;
 
-void boost_about (void)
+void boost_about(void)
 {
 	static GtkWidget * boost_about_dialog = NULL;
 
-	audgui_simple_message (& boost_about_dialog, GTK_MESSAGE_INFO,
+	audgui_simple_message(& boost_about_dialog, GTK_MESSAGE_INFO,
 	 "About Boost Plugin", boost_about_text);
 }
 
 static void apply_changes(void)
 {
 	mcs_handle_t *cfg;
-	boost_delay = gtk_adjustment_get_value (boost_delay_adj);
-	boost_feedback = gtk_adjustment_get_value (boost_feedback_adj);
-	boost_volume = gtk_adjustment_get_value (boost_volume_adj);
+	boost_delay = gtk_adjustment_get_value(boost_delay_adj);
+	boost_feedback = gtk_adjustment_get_value(boost_feedback_adj);
+	boost_volume = gtk_adjustment_get_value(boost_volume_adj);
 
 	cfg = aud_cfg_db_open();
 	if (! cfg)
@@ -65,21 +65,21 @@ void boost_configure(void)
 		return;
 
 	conf_dialog = gtk_dialog_new();
-	g_signal_connect (conf_dialog, "destroy", (GCallback) gtk_widget_destroyed,
+	g_signal_connect(conf_dialog, "destroy", (GCallback) gtk_widget_destroyed,
 	 & conf_dialog);
 	gtk_window_set_title(GTK_WINDOW(conf_dialog), "Configure Boost");
 
-	boost_delay_adj = (GtkAdjustment *) gtk_adjustment_new (boost_delay, 0,
+	boost_delay_adj = (GtkAdjustment *) gtk_adjustment_new(boost_delay, 0,
 	 MAX_DELAY + 100, 10, 100, 100);
-	boost_feedback_adj = (GtkAdjustment *) gtk_adjustment_new (boost_feedback, 0,
+	boost_feedback_adj = (GtkAdjustment *) gtk_adjustment_new(boost_feedback, 0,
 	 100 + 10, 2, 10, 10);
-	boost_volume_adj = (GtkAdjustment *) gtk_adjustment_new (boost_volume, 0, 100
+	boost_volume_adj = (GtkAdjustment *) gtk_adjustment_new(boost_volume, 0, 100
 	 + 10, 2, 10, 10);
 
 	table = gtk_table_new(2, 3, FALSE);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_box_pack_start ((GtkBox *) gtk_dialog_get_content_area ((GtkDialog *)
+	gtk_box_pack_start((GtkBox *) gtk_dialog_get_content_area((GtkDialog *)
 	 conf_dialog), table, TRUE, TRUE, 5);
 	gtk_widget_show(table);
 
@@ -115,26 +115,26 @@ void boost_configure(void)
 
 	bbox = gtk_hbutton_box_new();
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_start ((GtkBox *) gtk_dialog_get_action_area ((GtkDialog *)
+	gtk_box_pack_start((GtkBox *) gtk_dialog_get_action_area((GtkDialog *)
 	 conf_dialog), bbox, TRUE, TRUE, 0);
 
 	button = gtk_button_new_with_label("Ok");
-	gtk_widget_set_can_default (button, TRUE);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, TRUE, TRUE, 0);
-	g_signal_connect (button, "clicked", (GCallback) conf_ok_cb, NULL);
+	g_signal_connect(button, "clicked", (GCallback) conf_ok_cb, NULL);
 	gtk_widget_grab_default(button);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label("Cancel");
-	gtk_widget_set_can_default (button, TRUE);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, TRUE, TRUE, 0);
-	g_signal_connect (button, "clicked", (GCallback) conf_cancel_cb, NULL);
+	g_signal_connect(button, "clicked", (GCallback) conf_cancel_cb, NULL);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label("Apply");
-	gtk_widget_set_can_default (button, TRUE);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, TRUE, TRUE, 0);
-	g_signal_connect (button, "clicked", (GCallback) conf_apply_cb, NULL);
+	g_signal_connect(button, "clicked", (GCallback) conf_apply_cb, NULL);
 	gtk_widget_show(button);
 	gtk_widget_show(bbox);
 
