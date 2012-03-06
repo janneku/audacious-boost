@@ -15,14 +15,15 @@ static void cleanup(void);
 
 #define MAX_SRATE         50000
 #define MAX_CHANNELS      2
-#define BYTES_PS          sizeof(gfloat)
-#define BUFFER_SAMPLES    (MAX_SRATE * MAX_DELAY / 1000)
-#define BUFFER_SHORTS     (BUFFER_SAMPLES * MAX_CHANNELS)
-#define BUFFER_BYTES      (BUFFER_SHORTS * BYTES_PS)
+#define MIN_CUTOFF        50
+#define BUFFER_SAMPLES    (MAX_SRATE / 2 / MIN_CUTOFF)
+#define BUFFER_FRAMES     (BUFFER_SAMPLES * MAX_CHANNELS)
+#define BUFFER_BYTES      (BUFFER_FRAMES * sizeof(gfloat))
 
 static gfloat *buffer = NULL;
 gint boost_delay = 500, boost_feedback = 50, boost_volume = 50;
-static int w_ofs;
+gint boost_cutoff = 100;
+static gint write_pos;
 
 static gboolean init(void)
 {
@@ -61,7 +62,7 @@ static void boost_start(gint *channels, gint *rate)
 	if (boost_channels != old_nch || boost_rate != old_srate)
 	{
 		memset(buffer, 0, BUFFER_BYTES);
-		w_ofs = 0;
+		write_pos = 0;
 		old_nch = boost_channels;
 		old_srate = boost_rate;
 	}
@@ -85,28 +86,28 @@ static gint boost_output_to_decoder_time(gint time)
 static void boost_process(gfloat **d, gint *samples)
 {
 	gfloat in, out, buf;
-	gint r_ofs;
+	gint i, pos;
 	gfloat *data = *d;
 	gfloat *end = *d + *samples;
 
-	r_ofs = w_ofs - (boost_rate * boost_delay / 1000) * boost_channels;
-	if (r_ofs < 0)
-		r_ofs += BUFFER_SHORTS;
+	gint count = (boost_rate / 2 / boost_cutoff) * boost_channels;
 
 	for (; data < end; data++)
 	{
-		in = *data;
+		buffer[write_pos] = *data;
 
-		buf = buffer[r_ofs];
-		out = in + buf * boost_volume / 100;
-		buf = in + buf * boost_feedback / 100;
-		buffer[w_ofs] = buf;
-		*data = out;
+		pos = write_pos;
+		out = 0;
+		for (i = 0; i < count; ++i) {
+			out += buffer[pos];
+			pos--;
+			if (pos < 0)
+				pos += BUFFER_FRAMES;
+		}
+		*data = *data * 0.5 + out / count;
 
-		if (++r_ofs >= BUFFER_SHORTS)
-			r_ofs -= BUFFER_SHORTS;
-		if (++w_ofs >= BUFFER_SHORTS)
-			w_ofs -= BUFFER_SHORTS;
+		if (++write_pos >= BUFFER_FRAMES)
+			write_pos -= BUFFER_FRAMES;
 	}
 }
 
