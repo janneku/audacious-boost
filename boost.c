@@ -13,15 +13,14 @@
 static gboolean init(void);
 static void cleanup(void);
 
-#define MAX_SRATE         50000
 #define MAX_CHANNELS      2
-#define MIN_CUTOFF        50
-#define BUFFER_SAMPLES    (MAX_SRATE / 2 / MIN_CUTOFF)
+#define BUFFER_SAMPLES    (MAX_SRATE / 2 / MIN_CUTOFF + \
+                           MAX_SRATE * MAX_DELAY / 1000)
 #define BUFFER_FRAMES     (BUFFER_SAMPLES * MAX_CHANNELS)
 #define BUFFER_BYTES      (BUFFER_FRAMES * sizeof(gfloat))
 
 static gfloat *buffer = NULL;
-gint boost_delay = 500, boost_feedback = 50, boost_volume = 50;
+gint boost_delay = 10, boost_feedback = 100, boost_volume = 10;
 gint boost_cutoff = 100;
 static gint write_pos;
 
@@ -35,6 +34,7 @@ static gboolean init(void)
 	aud_cfg_db_get_int(cfg, "boost_plugin", "delay", &boost_delay);
 	aud_cfg_db_get_int(cfg, "boost_plugin", "feedback", &boost_feedback);
 	aud_cfg_db_get_int(cfg, "boost_plugin", "volume", &boost_volume);
+	aud_cfg_db_get_int(cfg, "boost_plugin", "cutoff", &boost_cutoff);
 	aud_cfg_db_close(cfg);
 
 	return TRUE;
@@ -90,21 +90,22 @@ static void boost_process(gfloat **d, gint *samples)
 	gfloat *data = *d;
 	gfloat *end = *d + *samples;
 
-	gint count = (boost_rate / 2 / boost_cutoff) * boost_channels;
+	gint count = boost_rate / 2 / boost_cutoff;
 
 	for (; data < end; data++)
 	{
 		buffer[write_pos] = *data;
 
-		pos = write_pos;
+		pos = write_pos - (boost_rate * boost_delay / 1000) * boost_channels;
 		out = 0;
 		for (i = 0; i < count; ++i) {
-			out += buffer[pos];
-			pos--;
 			if (pos < 0)
 				pos += BUFFER_FRAMES;
+			out += buffer[pos];
+			pos -= boost_channels;
 		}
-		*data = *data * 0.5 + out / count;
+		*data = *data * (boost_volume / 100.0) +
+			out * (boost_feedback / 100.0) / count;
 
 		if (++write_pos >= BUFFER_FRAMES)
 			write_pos -= BUFFER_FRAMES;
