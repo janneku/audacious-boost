@@ -4,3 +4,11 @@ Copyright 2012 Janne Kulmala <janne.t.kulmala@iki.fi>
 Based on XMMS/Audacious echo plugin by Johan Levin 1999.
 
 Program code is licensed with GNU GPL 2.0. See COPYING.GPL file.
+
+
+
+(input)--->-----+----->(passthrough volume)------->(+)--->(output)
+                |                                   |
+               (+)<-------(feedback amount)<--------|
+                |                                   |
+                '--->(delay)-->(lowpass filter)---->'
