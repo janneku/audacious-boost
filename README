@@ -5,9 +5,9 @@ Based on XMMS/Audacious echo plugin by Johan Levin 1999.
 
 Program code is licensed with GNU GPL 2.0. See COPYING.GPL file.
 
-This plugin is designed to improve the poor bass reproduction of heap 
-and low-quality head phones by boosting the thumps. It does this by 
-extracting the low frequencies using a low pass filter and using a 
+This plugin is designed to improve the poor bass reproduction of cheap 
+and low-quality head phones by boosting the thumps. It is accomplished 
+by extracting the low frequencies using a low pass filter and using a 
 combination of delay buffer and feedback. The delay and the feedback are 
 used to simulate the bouncing of the sound pressure produced by a large 
 subwoofer in a (small) room. For example, a wall 5 meters away causes an 
