@@ -20,7 +20,7 @@ static void cleanup(void);
 #define BUFFER_BYTES      (BUFFER_FRAMES * sizeof(gfloat))
 
 static gfloat *buffer = NULL;
-gint boost_delay = 10, boost_feedback = 100, boost_volume = 10;
+gint boost_delay = 20, boost_feedback = 60, boost_volume = 10;
 gint boost_cutoff = 100;
 static gint write_pos;
 
@@ -94,9 +94,7 @@ static void boost_process(gfloat **d, gint *samples)
 
 	for (; data < end; data++)
 	{
-		buffer[write_pos] = *data;
-
-		pos = write_pos - (boost_rate * boost_delay / 1000) * boost_channels;
+		pos = write_pos - (boost_rate * boost_delay / 1000) * boost_channels - 1;
 		out = 0;
 		for (i = 0; i < count; ++i) {
 			if (pos < 0)
@@ -104,8 +102,9 @@ static void boost_process(gfloat **d, gint *samples)
 			out += buffer[pos];
 			pos -= boost_channels;
 		}
-		*data = *data * (boost_volume / 100.0) +
-			out * (boost_feedback / 100.0) / count;
+		out = out / count;
+		buffer[write_pos] = *data + out * (boost_feedback / 100.0);
+		*data = *data * (boost_volume / 100.0) + out;
 
 		if (++write_pos >= BUFFER_FRAMES)
 			write_pos -= BUFFER_FRAMES;
