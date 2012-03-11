@@ -94,25 +94,25 @@ void boost_configure(void)
 			   table, TRUE, TRUE, 5);
 	gtk_widget_show(table);
 
-	label = gtk_label_new("Delay: (ms)");
+	label = gtk_label_new("Reverb delay: (ms)");
 	gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL,
 			 GTK_FILL, 0, 0);
 	gtk_widget_show(label);
 
-	label = gtk_label_new("Feedback: (%)");
+	label = gtk_label_new("Feedback amount: (%)");
 	gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL,
 			 GTK_FILL, 0, 0);
 	gtk_widget_show(label);
 
-	label = gtk_label_new("Volume: (%)");
+	label = gtk_label_new("Passthrough volume: (%)");
 	gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL,
 			 GTK_FILL, 0, 0);
 	gtk_widget_show(label);
 
-	label = gtk_label_new("Cutoff: (Hz)");
+	label = gtk_label_new("Lowpass cutoff: (Hz)");
 	gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL,
 			 GTK_FILL, 0, 0);
